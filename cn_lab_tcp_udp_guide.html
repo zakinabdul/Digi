@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Computer Networks Lab — TCP & UDP C Programs</title>
+<style>
+:root{
+ --bg:#080f1d;--surface:#101b2d;--surface2:#0b1525;--surface3:#17263d;
+ --text:#edf4ff;--muted:#a7b6cb;--line:#263954;--blue:#79b8ff;--cyan:#78e0d0;
+ --code:#d9e8ff;--shadow:0 14px 36px rgba(0,0,0,.18)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{margin:0;background:radial-gradient(ellipse at 15% 0%,#132846 0,transparent 34%),var(--bg);color:var(--text);font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{width:min(100% - 32px,980px);margin-inline:auto}
+header{padding:clamp(30px,7vw,66px) 0 30px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,rgba(19,43,72,.92),rgba(9,17,31,.75))}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #365579;border-radius:999px;color:#c5e2ff;background:#17304e;font-size:.78rem;font-weight:700;letter-spacing:.04em;margin-bottom:16px}
+.eyebrow:before{content:"";width:7px;height:7px;background:var(--cyan);border-radius:50%}
+h1{font-size:clamp(1.9rem,6vw,3.15rem);line-height:1.08;letter-spacing:-.045em;margin:0 0 14px;max-width:760px}
+header p{color:#c1d0e4;max-width:700px;margin:0;font-size:clamp(.98rem,2vw,1.08rem)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.hero-meta span{font-size:.82rem;color:#dceaff;background:#ffffff0d;border:1px solid #ffffff1c;border-radius:9px;padding:6px 10px}
+nav{position:sticky;top:0;z-index:20;background:rgba(8,15,29,.91);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.navinner{display:flex;gap:8px;align-items:center;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.navinner::-webkit-scrollbar{display:none}
+.navinner a{white-space:nowrap;color:#cbd9eb;text-decoration:none;border:1px solid var(--line);padding:7px 12px;border-radius:999px;font-size:.86rem;background:#111e31}
+.navinner a:hover,.navinner a:focus{border-color:#5c91c7;color:white}
+main{padding:25px 0 64px}
+.intro{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:linear-gradient(135deg,#142a45,#101d30);border:1px solid #2b4667;border-radius:16px;padding:17px 19px;margin-bottom:26px;box-shadow:var(--shadow)}
+.intro strong{display:block;margin-bottom:3px}.intro p{margin:0;color:#c2d2e6;font-size:.92rem}
+.intro-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#24476b;color:#cce7ff;font-size:1.25rem}
+.section-heading{margin:32px 0 12px;scroll-margin-top:100px}
+.section-heading h2{font-size:1.55rem;letter-spacing:-.025em;margin:0 0 3px}
+.section-heading p{margin:0;color:var(--muted);font-size:.92rem}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 22px}
+.searchbox{flex:1 1 220px;position:relative}
+.searchbox input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--text);padding:10px 13px;font:inherit;outline:none}
+.searchbox input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #79b8ff22}
+.filter{min-height:44px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--text);padding:9px 13px;font:inherit;cursor:pointer}
+.filter[aria-pressed="true"]{background:#21466c;border-color:#528bc4;color:white}
+.question{background:linear-gradient(180deg,#111e31,#0e192a);border:1px solid var(--line);border-radius:17px;padding:clamp(15px,3vw,24px);margin:16px 0 20px;box-shadow:var(--shadow);scroll-margin-top:92px;min-width:0}
+.qhead{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.number{background:#203e60;color:#d1e8ff;border:1px solid #365b80;border-radius:8px;padding:3px 9px;font-size:.83rem;font-weight:800}
+.tag{font-size:.72rem;letter-spacing:.1em;color:var(--cyan);font-weight:800}
+.question h2{font-size:clamp(1.15rem,3vw,1.38rem);line-height:1.3;margin:7px 0 9px;letter-spacing:-.02em}
+.question p{margin:9px 0;color:#d1dceb}
+.small{color:var(--muted)!important;font-size:.88rem}
+h3{font-size:1rem;margin:23px 0 8px;color:#cfe2fb;display:flex;align-items:center;gap:8px}
+h3:before{content:"";width:3px;height:16px;border-radius:4px;background:var(--blue)}
+pre{max-width:100%;overflow:auto;overscroll-behavior-x:contain;background:var(--surface2);border:1px solid #253a56;border-radius:12px;padding:14px;margin:8px 0;color:var(--code);font:clamp(11.5px,1.55vw,13px)/1.58 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:4;-webkit-overflow-scrolling:touch;white-space:pre}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:13px 0 6px}
+.toolbar span{font-size:.78rem;color:var(--muted)}
+.copy{background:#1e4770;border:1px solid #37658f;color:#eff7ff;border-radius:9px;padding:8px 12px;min-height:36px;font-weight:650;cursor:pointer}
+.copy:hover{background:#285b8d}.copy:focus-visible,.filter:focus-visible,.navinner a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.question ul{padding-left:21px;color:#d1dceb}.question li{padding:3px 0}
+table{font-size:.9rem}th{color:#d9eaff}
+.empty{display:none;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:20px;color:var(--muted);text-align:center}
+footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--muted);font-size:.86rem}
+@media(max-width:600px){
+ .wrap{width:min(100% - 22px,980px)}
+ header{padding:30px 0 24px}
+ .intro{grid-template-columns:1fr;padding:15px}.intro-icon{display:none}
+ .navinner{gap:6px}.navinner a{font-size:.81rem;padding:7px 10px}
+ .question{border-radius:13px;margin:13px 0 16px}
+ pre{padding:12px;border-radius:10px;font-size:11.5px}
+ .toolbar{align-items:center}.copy{min-height:40px;padding:8px 11px}
+ .section-heading h2{font-size:1.35rem}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">LAB EXAM QUICK REVISION</div><h1>Computer Networks Lab<br>TCP &amp; UDP in C</h1><div class="hero-meta"><span>8 practical questions</span><span>16 C programs</span><span>Ubuntu-ready</span></div>
+<p>8 simple client-server practical programs, with server code, client code, sample output and Ubuntu commands. Designed for quick lab-exam revision.</p>
+</div></header>
+<nav><div class="wrap navinner">
+<a href="#tcp">TCP programs</a><a href="#udp">UDP programs</a><a href="#revision">Quick revision</a>
+</div></nav>
+<main class="wrap">
+<div class="intro"><div><strong>How to use this guide</strong><p>Open two terminals in the same folder. Start the server in Terminal 1, then run the client in Terminal 2. All examples use localhost (127.0.0.1).</p></div><div class="intro-icon" aria-hidden="true">⌘</div></div>
+<div class="tools"><div class="searchbox"><input id="searchQuestions" type="search" placeholder="Search questions (e.g. factorial, string)..." aria-label="Search questions"></div><button class="filter" data-filter="all" aria-pressed="true">All 8</button><button class="filter" data-filter="tcp" aria-pressed="false">TCP</button><button class="filter" data-filter="udp" aria-pressed="false">UDP</button></div>
+<div class="empty" id="emptyState">No matching programs. Try another search term.</div>
+<div id="tcp"><h2>Part 1 — TCP programs</h2><p class="small">TCP uses SOCK_STREAM, bind(), listen(), accept(), connect(), send() and recv().</p></div>
+
+<section class="question" id="q1" data-protocol="tcp">
+  <div class="qhead"><span class="number">Q1</span><span class="tag">TCP</span></div>
+  <h2>1. Factorial of a number using TCP</h2>
+  <p>The client sends an integer N. The server calculates N! and returns it. This version accepts 0 to 20 so the result fits in unsigned long long.</p>
+  <p class="small">Port: <b>8081</b> · Files: <code>server1.c</code> and <code>client1.c</code></p>
+  <h3>Server program — server1.c</h3>
+  <pre><code>// server1.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, c, n, i;
+    unsigned long long fact = 1;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8081);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    listen(s, 1);
+    printf(&quot;Waiting for client...\n&quot;);
+
+    c = accept(s, NULL, NULL);
+    recv(c, b, sizeof(b), 0);
+    n = atoi(b);
+
+    if (n &lt; 0 || n &gt; 20) {
+        strcpy(b, &quot;Enter N between 0 and 20&quot;);
+    } else {
+        for (i = 1; i &lt;= n; i++)
+            fact = fact * i;
+        sprintf(b, &quot;%llu&quot;, fact);
+    }
+
+    send(c, b, strlen(b) + 1, 0);
+    close(c);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client1.c</h3>
+  <pre><code>// client1.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8081);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    connect(s, (struct sockaddr *)&amp;server, sizeof(server));
+
+    printf(&quot;Enter a number (0 to 20): &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    send(s, b, strlen(b) + 1, 0);
+    recv(s, b, sizeof(b), 0);
+
+    printf(&quot;Factorial = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server1.c -o server
+gcc client1.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for client...\n\nClient: Enter a number (0 to 20): 5\nFactorial = 120</code></pre>
+</section>
+
+<section class="question" id="q2" data-protocol="tcp">
+  <div class="qhead"><span class="number">Q2</span><span class="tag">TCP</span></div>
+  <h2>2. Even or odd using TCP</h2>
+  <p>The client sends an integer. The server checks N % 2 and returns Even or Odd.</p>
+  <p class="small">Port: <b>8082</b> · Files: <code>server2.c</code> and <code>client2.c</code></p>
+  <h3>Server program — server2.c</h3>
+  <pre><code>// server2.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, c, n;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8082);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    listen(s, 1);
+    printf(&quot;Waiting for client...\n&quot;);
+
+    c = accept(s, NULL, NULL);
+    recv(c, b, sizeof(b), 0);
+    n = atoi(b);
+
+    if (n % 2 == 0)
+        strcpy(b, &quot;Even&quot;);
+    else
+        strcpy(b, &quot;Odd&quot;);
+
+    send(c, b, strlen(b) + 1, 0);
+    close(c);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client2.c</h3>
+  <pre><code>// client2.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8082);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    connect(s, (struct sockaddr *)&amp;server, sizeof(server));
+
+    printf(&quot;Enter a number: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    send(s, b, strlen(b) + 1, 0);
+    recv(s, b, sizeof(b), 0);
+
+    printf(&quot;Result = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server2.c -o server
+gcc client2.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for client...\n\nClient: Enter a number: 7\nResult = Odd</code></pre>
+</section>
+
+<section class="question" id="q3" data-protocol="tcp">
+  <div class="qhead"><span class="number">Q3</span><span class="tag">TCP</span></div>
+  <h2>3. Square of a number using TCP</h2>
+  <p>The client sends an integer. The server calculates N × N and returns the square.</p>
+  <p class="small">Port: <b>8083</b> · Files: <code>server3.c</code> and <code>client3.c</code></p>
+  <h3>Server program — server3.c</h3>
+  <pre><code>// server3.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, c, n;
+    long long square;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8083);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    listen(s, 1);
+    printf(&quot;Waiting for client...\n&quot;);
+
+    c = accept(s, NULL, NULL);
+    recv(c, b, sizeof(b), 0);
+    n = atoi(b);
+
+    square = (long long)n * n;
+    sprintf(b, &quot;%lld&quot;, square);
+
+    send(c, b, strlen(b) + 1, 0);
+    close(c);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client3.c</h3>
+  <pre><code>// client3.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8083);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    connect(s, (struct sockaddr *)&amp;server, sizeof(server));
+
+    printf(&quot;Enter a number: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    send(s, b, strlen(b) + 1, 0);
+    recv(s, b, sizeof(b), 0);
+
+    printf(&quot;Square = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server3.c -o server
+gcc client3.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for client...\n\nClient: Enter a number: 6\nSquare = 36</code></pre>
+</section>
+
+<section class="question" id="q4" data-protocol="tcp">
+  <div class="qhead"><span class="number">Q4</span><span class="tag">TCP</span></div>
+  <h2>4. Length of a string using TCP</h2>
+  <p>The client sends a string. The server calculates strlen() and sends the length back. Spaces are allowed.</p>
+  <p class="small">Port: <b>8084</b> · Files: <code>server4.c</code> and <code>client4.c</code></p>
+  <h3>Server program — server4.c</h3>
+  <pre><code>// server4.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, c, length;
+    char b[1024];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8084);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    listen(s, 1);
+    printf(&quot;Waiting for client...\n&quot;);
+
+    c = accept(s, NULL, NULL);
+    recv(c, b, sizeof(b), 0);
+    b[sizeof(b) - 1] = &#x27;\0&#x27;;
+
+    length = strlen(b);
+    sprintf(b, &quot;%d&quot;, length);
+
+    send(c, b, strlen(b) + 1, 0);
+    close(c);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client4.c</h3>
+  <pre><code>// client4.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[1024];
+    struct sockaddr_in server;
+
+    s = socket(AF_INET, SOCK_STREAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8084);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    connect(s, (struct sockaddr *)&amp;server, sizeof(server));
+
+    printf(&quot;Enter a string: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    send(s, b, strlen(b) + 1, 0);
+    recv(s, b, sizeof(b), 0);
+
+    printf(&quot;String length = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server4.c -o server
+gcc client4.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for client...\n\nClient: Enter a string: Hello World\nString length = 11</code></pre>
+</section>
+
+<div id="udp"><h2>Part 2 — UDP programs</h2><p class="small">UDP uses SOCK_DGRAM, bind(), sendto() and recvfrom(). There is no listen() or accept().</p></div>
+
+<section class="question" id="q5" data-protocol="udp">
+  <div class="qhead"><span class="number">Q5</span><span class="tag">UDP</span></div>
+  <h2>5. Factorial of a number using UDP</h2>
+  <p>The client sends N in a UDP datagram. The server calculates N! and sends the answer to the client&#x27;s address. Accepts 0 to 20.</p>
+  <p class="small">Port: <b>8085</b> · Files: <code>server5.c</code> and <code>client5.c</code></p>
+  <h3>Server program — server5.c</h3>
+  <pre><code>// server5.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, n, i;
+    unsigned long long fact = 1;
+    char b[100];
+    struct sockaddr_in server, client;
+    socklen_t len = sizeof(client);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8085);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    printf(&quot;Waiting for datagram...\n&quot;);
+
+    recvfrom(s, b, sizeof(b) - 1, 0,
+             (struct sockaddr *)&amp;client, &amp;len);
+    b[sizeof(b) - 1] = &#x27;\0&#x27;;
+    n = atoi(b);
+
+    if (n &lt; 0 || n &gt; 20) {
+        strcpy(b, &quot;Enter N between 0 and 20&quot;);
+    } else {
+        for (i = 1; i &lt;= n; i++)
+            fact = fact * i;
+        sprintf(b, &quot;%llu&quot;, fact);
+    }
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;client, len);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client5.c</h3>
+  <pre><code>// client5.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+    socklen_t len = sizeof(server);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8085);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    printf(&quot;Enter a number (0 to 20): &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;server, len);
+    recvfrom(s, b, sizeof(b), 0,
+             (struct sockaddr *)&amp;server, &amp;len);
+
+    printf(&quot;Factorial = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server5.c -o server
+gcc client5.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for datagram...\n\nClient: Enter a number (0 to 20): 5\nFactorial = 120</code></pre>
+</section>
+
+<section class="question" id="q6" data-protocol="udp">
+  <div class="qhead"><span class="number">Q6</span><span class="tag">UDP</span></div>
+  <h2>6. Even or odd using UDP</h2>
+  <p>The client sends an integer datagram. The server checks whether it is even or odd and replies.</p>
+  <p class="small">Port: <b>8086</b> · Files: <code>server6.c</code> and <code>client6.c</code></p>
+  <h3>Server program — server6.c</h3>
+  <pre><code>// server6.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, n;
+    char b[100];
+    struct sockaddr_in server, client;
+    socklen_t len = sizeof(client);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8086);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    printf(&quot;Waiting for datagram...\n&quot;);
+
+    recvfrom(s, b, sizeof(b) - 1, 0,
+             (struct sockaddr *)&amp;client, &amp;len);
+    b[sizeof(b) - 1] = &#x27;\0&#x27;;
+    n = atoi(b);
+
+    if (n % 2 == 0)
+        strcpy(b, &quot;Even&quot;);
+    else
+        strcpy(b, &quot;Odd&quot;);
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;client, len);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client6.c</h3>
+  <pre><code>// client6.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+    socklen_t len = sizeof(server);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8086);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    printf(&quot;Enter a number: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;server, len);
+    recvfrom(s, b, sizeof(b), 0,
+             (struct sockaddr *)&amp;server, &amp;len);
+
+    printf(&quot;Result = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server6.c -o server
+gcc client6.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for datagram...\n\nClient: Enter a number: 8\nResult = Even</code></pre>
+</section>
+
+<section class="question" id="q7" data-protocol="udp">
+  <div class="qhead"><span class="number">Q7</span><span class="tag">UDP</span></div>
+  <h2>7. Square of a number using UDP</h2>
+  <p>The client sends an integer datagram. The server calculates its square and replies.</p>
+  <p class="small">Port: <b>8087</b> · Files: <code>server7.c</code> and <code>client7.c</code></p>
+  <h3>Server program — server7.c</h3>
+  <pre><code>// server7.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, n;
+    long long square;
+    char b[100];
+    struct sockaddr_in server, client;
+    socklen_t len = sizeof(client);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8087);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    printf(&quot;Waiting for datagram...\n&quot;);
+
+    recvfrom(s, b, sizeof(b) - 1, 0,
+             (struct sockaddr *)&amp;client, &amp;len);
+    b[sizeof(b) - 1] = &#x27;\0&#x27;;
+    n = atoi(b);
+
+    square = (long long)n * n;
+    sprintf(b, &quot;%lld&quot;, square);
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;client, len);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client7.c</h3>
+  <pre><code>// client7.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[100];
+    struct sockaddr_in server;
+    socklen_t len = sizeof(server);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8087);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    printf(&quot;Enter a number: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;server, len);
+    recvfrom(s, b, sizeof(b), 0,
+             (struct sockaddr *)&amp;server, &amp;len);
+
+    printf(&quot;Square = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server7.c -o server
+gcc client7.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for datagram...\n\nClient: Enter a number: 9\nSquare = 81</code></pre>
+</section>
+
+<section class="question" id="q8" data-protocol="udp">
+  <div class="qhead"><span class="number">Q8</span><span class="tag">UDP</span></div>
+  <h2>8. Length of a string using UDP</h2>
+  <p>The client sends a string datagram. The server uses strlen() and returns the length. Spaces are allowed.</p>
+  <p class="small">Port: <b>8088</b> · Files: <code>server8.c</code> and <code>client8.c</code></p>
+  <h3>Server program — server8.c</h3>
+  <pre><code>// server8.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s, length, received;
+    char b[1024];
+    struct sockaddr_in server, client;
+    socklen_t len = sizeof(client);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8088);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(s, (struct sockaddr *)&amp;server, sizeof(server));
+    printf(&quot;Waiting for datagram...\n&quot;);
+
+    received = recvfrom(s, b, sizeof(b) - 1, 0,
+                        (struct sockaddr *)&amp;client, &amp;len);
+    if (received &lt; 0) {
+        close(s);
+        return 1;
+    }
+    b[received] = &#x27;\0&#x27;;
+
+    length = strlen(b);
+    sprintf(b, &quot;%d&quot;, length);
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;client, len);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>Client program — client8.c</h3>
+  <pre><code>// client8.c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main() {
+    int s;
+    char b[1024];
+    struct sockaddr_in server;
+    socklen_t len = sizeof(server);
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8088);
+    server.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);
+
+    printf(&quot;Enter a string: &quot;);
+    fgets(b, sizeof(b), stdin);
+    b[strcspn(b, &quot;\n&quot;)] = &#x27;\0&#x27;;
+
+    sendto(s, b, strlen(b) + 1, 0,
+           (struct sockaddr *)&amp;server, len);
+    recvfrom(s, b, sizeof(b), 0,
+             (struct sockaddr *)&amp;server, &amp;len);
+
+    printf(&quot;String length = %s\n&quot;, b);
+    close(s);
+    return 0;
+}</code></pre>
+  <h3>How to run in Ubuntu</h3>
+  <p>Save the two code blocks in the same folder using the filenames shown above. Open two terminals in that folder.</p>
+  <pre><code># Compile both files
+gcc server8.c -o server
+gcc client8.c -o client
+
+# Terminal 1: start server
+./server
+
+# Terminal 2: run client
+./client</code></pre>
+  <h3>Sample output</h3>
+  <p>Start the server first. Then run the client and enter the sample input.</p>
+  <pre><code>Server terminal:\nWaiting for datagram...\n\nClient: Enter a string: Hello World\nString length = 11</code></pre>
+</section>
+
+<section class="question" id="revision">
+<h2>Quick revision — TCP vs UDP</h2>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:440px">
+<tr><th style="text-align:left;padding:9px;border-bottom:1px solid #35465e">TCP</th><th style="text-align:left;padding:9px;border-bottom:1px solid #35465e">UDP</th></tr>
+<tr><td style="padding:9px">SOCK_STREAM</td><td style="padding:9px">SOCK_DGRAM</td></tr>
+<tr><td style="padding:9px">Connection-oriented</td><td style="padding:9px">Connectionless</td></tr>
+<tr><td style="padding:9px">listen() and accept()</td><td style="padding:9px">No listen() or accept()</td></tr>
+<tr><td style="padding:9px">connect() on client</td><td style="padding:9px">No connect() needed here</td></tr>
+<tr><td style="padding:9px">send() and recv()</td><td style="padding:9px">sendto() and recvfrom()</td></tr>
+<tr><td style="padding:9px">Reliable, ordered byte stream</td><td style="padding:9px">Datagrams; delivery/order not guaranteed</td></tr>
+</table></div>
+<h3>Common socket functions</h3>
+<ul>
+<li><b>socket()</b> — creates a socket.</li><li><b>bind()</b> — assigns the server's IP address and port.</li>
+<li><b>listen()</b> — makes a TCP socket wait for connections.</li><li><b>accept()</b> — accepts a TCP client.</li>
+<li><b>connect()</b> — connects a TCP client to the server.</li><li><b>send()/recv()</b> — sends and receives TCP data.</li>
+<li><b>sendto()/recvfrom()</b> — sends and receives UDP datagrams.</li><li><b>close()</b> — closes a socket.</li>
+</ul>
+<h3>Ubuntu setup</h3>
+<pre><code>sudo apt update
+sudo apt install build-essential
+gcc server1.c -o server
+gcc client1.c -o client</code></pre>
+<p><b>Remember:</b> Compile the server and client separately. Start the server before starting the client. Each server handles one client/request and then exits, so restart it before testing again.</p>
+</section>
+</main>
+<footer><div class="wrap">Study guide note: These are intentionally small localhost lab examples. TCP is a byte stream, not a message protocol; a real application should handle partial sends/receives and define message boundaries. For a basic lab demonstration with short local messages, these examples keep the socket flow easy to follow.</div></footer>
+<script>
+const searchInput = document.getElementById('searchQuestions');
+const filterButtons = [...document.querySelectorAll('[data-filter]')];
+let activeFilter = 'all';
+function applyFilters() {
+  const term = searchInput.value.trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.question[data-protocol]').forEach(card => {
+    const matchesText = card.innerText.toLowerCase().includes(term);
+    const matchesProtocol = activeFilter === 'all' || card.dataset.protocol === activeFilter;
+    card.hidden = !(matchesText && matchesProtocol);
+    if (!card.hidden) visible++;
+  });
+  document.getElementById('emptyState').style.display = visible ? 'none' : 'block';
+}
+searchInput.addEventListener('input', applyFilters);
+filterButtons.forEach(button => button.addEventListener('click', () => {
+  activeFilter = button.dataset.filter;
+  filterButtons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+  applyFilters();
+}));
+document.querySelectorAll('pre').forEach(pre=>{
+ const btn=document.createElement('button');btn.className='copy';btn.textContent='Copy code';
+ const bar=document.createElement('div');bar.className='toolbar';bar.appendChild(document.createElement('span'));bar.lastChild.textContent='Code / terminal commands';bar.appendChild(btn);
+ pre.parentNode.insertBefore(bar,pre);
+ btn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(pre.innerText);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy code',1200)}catch(e){btn.textContent='Select and copy';}});
+});
+</script>
+</body></html>
